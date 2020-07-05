@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useContext } from 'react';
+import React, { useRef, useCallback } from 'react';
 import { FiLogIn, FiMail, FiLock } from 'react-icons/fi';
 import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
@@ -7,7 +7,8 @@ import * as Yup from 'yup';
 import { Container, Content, Background } from './styles';
 import logoImg from '../../assets/logo.svg';
 
-import { AuthContext } from '../../context/AuthContext';
+import { useAuth } from '../../hooks/auth';
+import { useToast } from '../../hooks/toast';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import getValidationErrors from '../../utils/getValidationErrors';
@@ -20,7 +21,8 @@ interface SigninFormData {
 const SignIn: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
 
-  const { signIn } = useContext(AuthContext);
+  const { signIn, signOut } = useAuth();
+  const { addToast } = useToast();
 
   const handleSubmit = useCallback(
     async (data: SigninFormData) => {
@@ -36,13 +38,31 @@ const SignIn: React.FC = () => {
         await schema.validate(data, { abortEarly: false });
 
         await signIn({ email: data.email, password: data.password });
+
+        addToast({
+          type: 'success',
+          title: 'Login efeutado com sucesso',
+        });
       } catch (err) {
-        const errors = getValidationErrors(err);
-        formRef.current?.setErrors(errors);
+        if (err instanceof Yup.ValidationError) {
+          const errors = getValidationErrors(err);
+          formRef.current?.setErrors(errors);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro na autenticação',
+          description: 'Erro ao tentar realizar login',
+        });
       }
     },
-    [signIn],
+    [addToast, signIn],
   );
+
+  const signout = useCallback(() => {
+    signOut();
+  }, [signOut]);
+
   return (
     <Container>
       <Content>
@@ -66,6 +86,10 @@ const SignIn: React.FC = () => {
           <FiLogIn />
           Criar Conta
         </a>
+
+        <button type="button" onClick={signout}>
+          SIGN OUT
+        </button>
       </Content>
       <Background />
     </Container>
