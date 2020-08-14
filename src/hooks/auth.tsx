@@ -6,20 +6,26 @@ interface SinginCredentials {
   password: string;
 }
 
-interface AuthContextData {
-  user: object;
-  signIn(credentials: SinginCredentials): Promise<void>;
-  signOut(): void;
+interface User {
+  id: string;
+  name: string;
+  avatar_url: string;
 }
 
 interface AuthState {
   token: string;
-  user: object;
+  user: User;
 }
 
 interface SigninData {
   email: string;
   password: string;
+}
+
+interface AuthContextData {
+  user: User;
+  signIn(credentials: SinginCredentials): Promise<void>;
+  signOut(): void;
 }
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
@@ -31,6 +37,8 @@ const AuthProvider: React.FC = ({ children }) => {
     const user = localStorage.getItem('@GoBarber:user');
 
     if (token && user) {
+      api.defaults.headers.authorization = `Bearer ${token}`;
+
       return { token, user: JSON.parse(user) };
     }
 
@@ -44,6 +52,8 @@ const AuthProvider: React.FC = ({ children }) => {
 
     localStorage.setItem('@GoBarber:token', token);
     localStorage.setItem('@GoBarber:user', JSON.stringify(user));
+
+    api.defaults.headers.authorization = `Bearer ${token}`;
 
     setData({ token, user });
   }, []);
