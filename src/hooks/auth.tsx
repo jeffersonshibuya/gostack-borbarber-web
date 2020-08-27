@@ -34,7 +34,6 @@ const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
 const AuthProvider: React.FC = ({ children }) => {
   const [data, setData] = useState<AuthState>(() => {
-    console.log('Auth');
     const token = localStorage.getItem('@GoBarber:token');
     const user = localStorage.getItem('@GoBarber:user');
 
@@ -90,10 +89,6 @@ const AuthProvider: React.FC = ({ children }) => {
 
 function useAuth(): AuthContextData {
   const context = useContext(AuthContext);
-
-  if (!context) {
-    throw new Error('useAuth must be used withing an AuthProvider');
-  }
 
   return context;
 }

@@ -23,9 +23,8 @@ const SignIn: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const history = useHistory();
 
-  const { user, signIn, signOut } = useAuth();
+  const { signIn } = useAuth();
 
-  console.log(user);
   const { addToast } = useToast();
 
   const handleSubmit = useCallback(
@@ -39,6 +38,7 @@ const SignIn: React.FC = () => {
             .email('Digite um e-mail válido'),
           password: Yup.string().required('Senha obrigatória'),
         });
+
         await schema.validate(data, { abortEarly: false });
 
         await signIn({ email: data.email, password: data.password });
@@ -65,10 +65,6 @@ const SignIn: React.FC = () => {
     },
     [addToast, history, signIn],
   );
-
-  const signout = useCallback(() => {
-    signOut();
-  }, [signOut]);
 
   return (
     <Container>
