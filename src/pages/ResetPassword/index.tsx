@@ -12,7 +12,6 @@ import { useToast } from '../../hooks/toast';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import getValidationErrors from '../../utils/getValidationErrors';
-import api from '../../services/api';
 
 interface ResetPasswordFormData {
   password: string;
@@ -42,7 +41,6 @@ const ResetPassword: React.FC = () => {
 
         await schema.validate(data, { abortEarly: false });
 
-        const { password, password_confirmation } = data;
         const token = location.search.replace('?token=', '');
 
         if (!token) {
