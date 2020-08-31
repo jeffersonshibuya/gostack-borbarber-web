@@ -118,7 +118,8 @@ const Profile: React.FC = () => {
         data.append('avatar', e.target.files[0]);
 
         api.patch('/users/avatar', data).then(response => {
-          updateUser(response.data);
+          console.log(response.data);
+          if (response.data) updateUser(response.data);
 
           addToast({
             type: 'success',
