@@ -66,6 +66,10 @@ const SignIn: React.FC = () => {
     [addToast, history, signIn],
   );
 
+  const handleError = useCallback(() => {
+    throw new Error('New error');
+  }, []);
+
   return (
     <Container>
       <Content>
